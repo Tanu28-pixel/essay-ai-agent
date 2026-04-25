@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essay Generator - Narrix AI</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f1ed; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { background: linear-gradient(135deg, #8B6F47 0%, #D97634 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin-bottom: 5px; }
+        .header-right { display: flex; gap: 10px; }
+        .help-btn, .guide-btn { background: rgba(255,255,255,0.2); padding: 8px 16px; border: 1px solid white; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
+        .help-btn:hover, .guide-btn:hover { background: rgba(255,255,255,0.3); }
+        .main-content { display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 20px; }
+        .sidebar { }
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(139, 111, 71, 0.15); margin-bottom: 20px; border-top: 3px solid #D97634; }
+        .card h2 { color: #8B6F47; margin-bottom: 20px; font-size: 1.2em; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: bold; font-size: 0.95em; }
+        textarea, input, select { width: 100%; padding: 12px; border: 2px solid #E8D5C4; border-radius: 5px; font-family: inherit; font-size: 1em; background: #FEFCF9; }
+        textarea:focus, input:focus, select:focus { outline: none; border-color: #D97634; box-shadow: 0 0 5px rgba(217, 118, 52, 0.3); }
+        textarea { resize: vertical; min-height: 120px; }
+        .btn { padding: 12px 24px; background: linear-gradient(135deg, #8B6F47 0%, #D97634 100%); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 0.95em; width: 100%; margin-bottom: 8px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(217, 118, 52, 0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-secondary { background: #8B6F47; }
+        .btn-secondary:hover { background: #6B5537; }
+        .btn-small { padding: 8px 12px; font-size: 0.85em; width: auto; margin-right: 5px; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .voice-btn { background: #E74C3C; }
+        .voice-btn:hover { background: #C0392B; }
+        .voice-btn.listening { background: #ff4444; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .result { background: #FEF8F4; padding: 20px; border-radius: 5px; border-left: 4px solid #D97634; }
+        .result h3 { color: #8B6F47; margin-bottom: 10px; }
+        .result p { color: #666; line-height: 1.6; margin-bottom: 15px; }
+        .score { display: inline-block; padding: 8px 16px; background: linear-gradient(135deg, #8B6F47 0%, #D97634 100%); color: white; border-radius: 20px; font-weight: bold; margin-right: 8px; }
+        .feedback { background: white; padding: 15px; border-radius: 5px; margin-top: 15px; border-left: 3px solid #D97634; }
+        .feedback h4 { color: #8B6F47; margin-bottom: 10px; }
+        .feedback li { margin-left: 20px; color: #666; margin-bottom: 5px; }
+        .loading { text-align: center; color: #D97634; }
+        .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #D97634; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .last-draft { background: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+        .last-draft p { color: #666; font-size: 0.9em; margin-bottom: 10px; }
+        .history-item { background: white; padding: 12px; border-left: 3px solid #D97634; margin-bottom: 8px; border-radius: 4px; cursor: pointer; }
+        .history-item:hover { background: #f9f9f9; }
+        .history-item small { color: #999; display: block; margin-top: 5px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        .modal-close { float: right; font-size: 1.5em; cursor: pointer; color: #999; }
+        .modal-close:hover { color: #333; }
+        .improvement-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .improvement-btn { padding: 10px; background: #FEF8F4; border: 2px solid #D97634; border-radius: 5px; cursor: pointer; text-align: center; font-size: 0.9em; color: #8B6F47; font-weight: bold; }
+        .improvement-btn:hover { background: #D97634; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>✍️ Narrix AI - Essay Writer</h1>
+                <p>Write compelling college essays with AI assistance</p>
+            </div>
+            <div class="header-right">
+                <button class="guide-btn" onclick="showGuide()">📖 Getting Started</button>
+                <button class="help-btn" onclick="showHelp()">❓ Help</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- LEFT COLUMN: Input -->
+            <div>
+                <div class="card">
+                    <h2>📝 Write Your Essay</h2>
+                    <form id="essayForm">
+                        <div class="form-group">
+                            <label for="university">🎓 University</label>
+                            <select id="university">
+                                <option value="">Select University...</option>
+                                <option value="harvard">Harvard University</option>
+                                <option value="stanford">Stanford University</option>
+                                <option value="mit">MIT</option>
+                                <option value="yale">Yale University</option>
+                                <option value="princeton">Princeton University</option>
+                                <option value="duke">Duke University</option>
+                                <option value="upenn">UPenn</option>
+                                <option value="columbia">Columbia University</option>
+                                <option value="stanford">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prompt">Essay Prompt</label>
+                            <textarea id="prompt" placeholder="Enter your essay prompt or topic here..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>📱 Input Method</label>
+                            <div class="btn-group">
+                                <button type="button" class="btn-secondary btn-small" onclick="startVoiceInput()">🎙️ Voice Input</button>
+                                <button type="button" class="btn-secondary btn-small" onclick="clearAll()">🗑️ Clear</button>
+                                <button type="button" class="btn-secondary btn-small" onclick="loadLastDraft()">📄 Last Draft</button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn">Generate Essay ✨</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>💡 Quick Tips</h2>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>✓ Be specific with examples</li>
+                        <li>✓ Show, don't tell</li>
+                        <li>✓ Use your authentic voice</li>
+                        <li>✓ Keep it personal & unique</li>
+                        <li>✓ Proofread before submitting</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- MIDDLE COLUMN: History -->
+            <div>
+                <div class="card">
+                    <h2>📚 Essay History</h2>
+                    <div id="history">
+                        <p style="color: #999; text-align: center;">No essays yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Result -->
+            <div>
+                <div class="card">
+                    <h2>📄 Generated Essay</h2>
+                    <div id="result">
+                        <p style="color: #999; text-align: center;">Your essay will appear here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeHelp()">&times;</span>
+            <h2 style="color: #8B6F47;">❓ Help & Guidance</h2>
+            <h3 style="margin-top: 20px; color: #D97634;">How to Use Narrix AI:</h3>
+            <p><strong>1. Select University:</strong> Choose your target university for context-specific essay suggestions.</p>
+            <p><strong>2. Enter Your Prompt:</strong> Paste your essay prompt or write your topic.</p>
+            <p><strong>3. Choose Input Method:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>Type your essay topic directly</li>
+                <li>Use voice input to speak your ideas</li>
+                <li>Load your last draft to continue editing</li>
+            </ul>
+            <p><strong>4. Generate:</strong> Click "Generate Essay" to get AI-powered suggestions.</p>
+            <p><strong>5. Improve:</strong> Use the improvement options to refine your essay.</p>
+            <h3 style="margin-top: 20px; color: #D97634;">Improvement Options:</h3>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>🎯 Better Hook:</strong> Strengthen your opening to grab attention</li>
+                <li><strong>💬 Strong Voice:</strong> Make your essay sound more authentic</li>
+                <li><strong>❤️ More Emotion:</strong> Add emotional depth and connection</li>
+                <li><strong>📝 Add Details:</strong> Include specific examples and anecdotes</li>
+                <li><strong>✨ Clarity:</strong> Make your writing clearer and easier to follow</li>
+                <li><strong>🌊 Better Flow:</strong> Improve transitions and pacing</li>
+                <li><strong>✏️ Grammar Fix:</strong> Correct any grammar and punctuation</li>
+                <li><strong>🔄 Full Rewrite:</strong> Completely rewrite the essay</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Guide Modal -->
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeGuide()">&times;</span>
+            <h2 style="color: #8B6F47;">📖 Getting Started with Narrix AI</h2>
+            <h3 style="margin-top: 20px; color: #D97634;">5-Minute Quick Start:</h3>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Pick a University</strong> - Choose where you're applying</li>
+                <li><strong>Enter Your Topic</strong> - Paste or speak about your essay idea</li>
+                <li><strong>Generate Essay</strong> - Click the generate button</li>
+                <li><strong>Review & Improve</strong> - Use improvement options for enhancement</li>
+                <li><strong>Save & Submit</strong> - Save your polished essay</li>
+            </ol>
+            <h3 style="margin-top: 20px; color: #D97634;">Key Features:</h3>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li>🎙️ <strong>Voice Input:</strong> Speak your ideas naturally</li>
+                <li>✍️ <strong>Smart Generation:</strong> AI-powered essay writing</li>
+                <li>📊 <strong>Analysis:</strong> Detailed feedback on your essay</li>
+                <li>🔄 <strong>8 Improvement Types:</strong> Multiple rewrite options</li>
+                <li>📚 <strong>History:</strong> Access all your previous essays</li>
+                <li>🏫 <strong>University-Specific:</strong> Tailored for each school</li>
+            </ul>
+            <h3 style="margin-top: 20px; color: #D97634;">Pro Tips:</h3>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li>Be specific and detailed in your prompts</li>
+                <li>Include personal experiences and insights</li>
+                <li>Use authentic language that reflects your voice</li>
+                <li>Review and customize AI suggestions</li>
+                <li>Try multiple improvement options to find the best fit</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Universities list
+        const universities = [
+            "Harvard", "Stanford", "MIT", "Yale", "Princeton", 
+            "Duke", "UPenn", "Columbia", "Northwestern", "Johns Hopkins"
+        ];
+
+        // Load email and history
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('email');
+            if (savedEmail) {
+                document.querySelector('[name="email"]')?.setValue?.(savedEmail);
+            }
+            loadHistory();
+        });
+
+        function showHelp() {
+            document.getElementById('helpModal').classList.add('show');
+        }
+
+        function closeHelp() {
+            document.getElementById('helpModal').classList.remove('show');
+        }
+
+        function showGuide() {
+            document.getElementById('guideModal').classList.add('show');
+        }
+
+        function closeGuide() {
+            document.getElementById('guideModal').classList.remove('show');
+        }
+
+        function clearAll() {
+            if (confirm('Clear all text?')) {
+                document.getElementById('prompt').value = '';
+                document.getElementById('prompt').focus();
+            }
+        }
+
+        function loadLastDraft() {
+            const lastEssay = localStorage.getItem('lastEssay');
+            if (lastEssay) {
+                document.getElementById('prompt').value = lastEssay;
+            } else {
+                alert('No previous essay found!');
+            }
+        }
+
+        function startVoiceInput() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            const btn = event.target;
+            
+            recognition.onstart = () => {
+                btn.classList.add('listening');
+                btn.textContent = '🎙️ Listening...';
+            };
+
+            recognition.onend = () => {
+                btn.classList.remove('listening');
+                btn.textContent = '🎙️ Voice Input';
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript + ' ';
+                }
+                document.getElementById('prompt').value += ' ' + transcript;
+            };
+
+            recognition.start();
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('essayHistory') || '[]');
+            const historyDiv = document.getElementById('history');
+            
+            if (history.length === 0) {
+                historyDiv.innerHTML = '<p style="color: #999; text-align: center;">No essays yet</p>';
+                return;
+            }
+
+            historyDiv.innerHTML = history.slice(-5).reverse().map((item, i) => `
+                <div class="history-item" onclick="loadHistoryEssay('${i}')">
+                    <strong>${item.university || 'Essay'}</strong>
+                    <small>${item.date}</small>
+                </div>
+            `).join('');
+        }
+
+        function loadHistoryEssay(index) {
+            const history = JSON.parse(localStorage.getItem('essayHistory') || '[]');
+            if (history[history.length - 1 - index]) {
+                document.getElementById('prompt').value = history[history.length - 1 - index].prompt;
+            }
+        }
+
+        document.getElementById('essayForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            const university = document.getElementById('university').value;
+            let email = localStorage.getItem('email') || 'guest@narrix.ai';
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Generating your essay...</p></div>';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, email, university })
+                });
+
+                const data = await response.json();
+                localStorage.setItem('lastEssay', data.essay);
+
+                // Save to history
+                const history = JSON.parse(localStorage.getItem('essayHistory') || '[]');
+                history.push({
+                    prompt: prompt,
+                    essay: data.essay,
+                    university: university,
+                    date: new Date().toLocaleDateString()
+                });
+                localStorage.setItem('essayHistory', JSON.stringify(history));
+                loadHistory();
+
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <div style="margin-bottom: 15px;">
+                            <span class="score">${data.score}</span>
+                            <span style="margin-left: 10px; color: #666;">${data.plagiarism}</span>
+                        </div>
+                        <h3>Your Essay:</h3>
+                        <p>${data.essay.replace(/\n/g, '<br>')}</p>
+                        <div class="improvement-options" style="margin-top: 15px;">
+                            <button class="improvement-btn" onclick="improveEssay('hook')">🎯 Better Hook</button>
+                            <button class="improvement-btn" onclick="improveEssay('voice')">💬 Strong Voice</button>
+                            <button class="improvement-btn" onclick="improveEssay('emotion')">❤️ More Emotion</button>
+                            <button class="improvement-btn" onclick="improveEssay('details')">📝 Add Details</button>
+                            <button class="improvement-btn" onclick="improveEssay('clarity')">✨ Clarity</button>
+                            <button class="improvement-btn" onclick="improveEssay('flow')">🌊 Better Flow</button>
+                            <button class="improvement-btn" onclick="improveEssay('grammar')">✏️ Grammar Fix</button>
+                            <button class="improvement-btn" onclick="improveEssay('rewrite')">🔄 Full Rewrite</button>
+                        </div>
+                        <div class="feedback">
+                            <h4>📌 Feedback:</h4>
+                            <ul>
+                                ${data.feedback.map(f => `<li>${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error generating essay: ${error.message}</p>`;
+            }
+        });
+
+        function improveEssay(type) {
+            const essay = localStorage.getItem('lastEssay');
+            alert(`Improving essay ${type}... (Feature coming soon!)`);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = (event) => {
+            const helpModal = document.getElementById('helpModal');
+            const guideModal = document.getElementById('guideModal');
+            if (event.target === helpModal) closeHelp();
+            if (event.target === guideModal) closeGuide();
+        };
+    </script>
+</body>
+</html>

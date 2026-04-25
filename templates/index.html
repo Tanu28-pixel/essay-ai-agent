@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrix AI - College Essay Agent</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #8B6F47 0%, #D97634 100%); min-height: 100vh; }
+        .navbar { background: rgba(0,0,0,0.15); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); }
+        .navbar h1 { color: white; font-size: 1.5em; }
+        .navbar a { color: white; text-decoration: none; margin-left: 20px; font-weight: bold; transition: all 0.3s; }
+        .navbar a:hover { text-decoration: underline; transform: scale(1.05); }
+        .hero { display: flex; align-items: center; justify-content: center; min-height: 90vh; padding: 40px; }
+        .hero-content { max-width: 800px; color: white; text-align: center; }
+        .hero h1 { font-size: 3.5em; margin-bottom: 20px; font-weight: 900; }
+        .hero p { font-size: 1.3em; margin-bottom: 30px; line-height: 1.6; opacity: 0.95; }
+        .btn-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .btn { display: inline-block; padding: 15px 40px; background: white; color: #8B6F47; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.1em; cursor: pointer; border: none; transition: all 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .btn-secondary { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.3); }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; padding: 60px 40px; background: white; }
+        .feature { padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(139, 111, 71, 0.15); border-top: 4px solid #D97634; transition: all 0.3s; }
+        .feature:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(139, 111, 71, 0.25); }
+        .feature-icon { font-size: 3em; margin-bottom: 15px; }
+        .feature h3 { color: #8B6F47; margin-bottom: 10px; font-size: 1.3em; }
+        .feature p { color: #666; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .cta-section { background: rgba(0,0,0,0.1); padding: 60px 40px; text-align: center; color: white; }
+        .cta-section h2 { font-size: 2.5em; margin-bottom: 30px; }
+        .cta-section p { font-size: 1.2em; margin-bottom: 30px; opacity: 0.95; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🎓 Narrix AI</h1>
+        <div>
+            <a href="/login">Login</a>
+            <a href="/app">Get Started</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>✍️ Write Better College Essays</h1>
+            <p>Get AI-powered help brainstorming, writing, and perfecting your college application essays. Stand out with Narrix AI.</p>
+            <div class="btn-group">
+                <a href="/app" class="btn">🚀 Start Writing Now</a>
+                <a href="#features" class="btn btn-secondary">📖 Learn More</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="features" class="features">
+        <div class="feature">
+            <div class="feature-icon">💡</div>
+            <h3>Brainstorm Ideas</h3>
+            <p>Get unique, compelling essay ideas with hooks and angles tailored to your story.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🎙️</div>
+            <h3>Voice Input</h3>
+            <p>Speak your ideas naturally. Our AI converts your thoughts into essay content instantly.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">✍️</div>
+            <h3>Generate Essays</h3>
+            <p>Create polished first drafts in seconds. Choose from multiple essay types and formats.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">📊</div>
+            <h3>Deep Analysis</h3>
+            <p>Get admissions officer-level feedback on hook, voice, insight, and overall quality.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">✨</div>
+            <h3>Smart Improvements</h3>
+            <p>Rewrite sections to improve voice, add emotion, enhance details, and improve flow.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🏫</div>
+            <h3>University-Specific</h3>
+            <p>Tailor essays for specific universities. Context-aware suggestions for each school.</p>
+        </div>
+    </div>
+
+    <div class="cta-section">
+        <h2>Ready to Write Your Best Essay?</h2>
+        <p style="font-size: 1.2em; margin-bottom: 30px;">Join thousands of students getting into their dream universities.</p>
+        <a href="/app" class="btn">Get Started Free 🚀</a>
+    </div>
+</body>
+</html>
